@@ -28,17 +28,17 @@ router.post("/reset-password/:token",  validateRequest(resetPasswordSchema), res
 router.post("/resend-verification", resendVerificationEmail);
 
 
-router.get("/user-profile", protect, (req, res) => {
-  res.json({ message: `Bienvenue ${req.user.name}` });
-});
-
-
 
 // Routes Google OAuth
 router.get("/google", googleAuthRedirect); // pour lancer l'auth
 router.get("/google/callback", googleAuthCallback); // callback après Google
 
 
+
+
+router.get("/user-profile", protect, (req, res) => {
+  res.json({ message: `Bienvenue ${req.user.name}` });
+});
 
 
 

@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import deleteUserCron from "./middlewares/deleteUser.js";
 import auditDependencies from './middlewares/auditDependencies.js'
 import limiter from './middlewares/rateLimit.js';
+import cors from 'cors';
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,11 @@ app.use(limiter)
 // Démarre le cron
 deleteUserCron.start();
 auditDependencies.start()
+app.use(cors({
+  origin: process.env.CLIENT_URL, 
+  credentials: true // pour que cookies soient envoyés
+}));
+
 
 app.use('/api/auth',limiter, authRoutes);
 

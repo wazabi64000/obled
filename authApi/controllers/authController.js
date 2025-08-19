@@ -62,7 +62,8 @@ export async function register(req, res) {
 
     // Génération du token de vérification
     const verificationToken = jwt.sign({ id: newUser._id }, JWT_SECRET, { expiresIn: "1d" });
-    const verificationUrl = `${CLIENT_URL}/api/auth/verify/${verificationToken}`;
+    const verificationUrl = `${CLIENT_URL}/verify/${verificationToken}`;
+
 
     // Envoi email
     await sendEmail({
@@ -173,11 +174,13 @@ export async function requestPasswordReset(req, res) {
 
     // Sauvegarde dans la DB avec expiration 1h par ex
     user.resetPasswordToken = resetTokenHashed;
-    user.resetPasswordExpire = Date.now() + 3600000; // 1h en ms
+  user.resetPasswordExpire = Date.now() + 604800000; // 7 jours en ms
+
     await user.save();
 
     // URL de reset envoyée par email
-    const resetUrl = `${CLIENT_URL}/api/auth/reset-password/${resetToken}`;
+const resetUrl = `${CLIENT_URL}/password-reset/${resetToken}`;
+
 
 await sendEmail({
   to: user.email, // avant c'était newUser.email, ça crashait
@@ -313,66 +316,61 @@ export const googleAuthRedirect = (req, res) => {
 };
 
 export const googleAuthCallback = async (req, res) => {
-  const code = req.query.code;
-  if (!code) return res.status(400).json({ message: "Token Google manquant" });
-
   try {
-    // Échange le code contre les tokens
+    const code = req.query.code;
+
+    if (!code) {
+      return res.status(400).json({ message: "Code manquant dans la requête." });
+    }
+
+    // Récupération des tokens depuis Google
     const { tokens } = await client.getToken(code);
     client.setCredentials(tokens);
 
-    // Récupère les infos utilisateur
+    // Récupération des infos utilisateur depuis Google
     const ticket = await client.verifyIdToken({
       idToken: tokens.id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
-    const { email, name, picture } = payload;
+    const { email, given_name, family_name, picture } = payload;
 
-    // Vérifie si l'utilisateur existe, sinon le créer
+    // Vérification si l'utilisateur existe déjà
     let user = await User.findOne({ email });
 
     if (!user) {
+      // Création d'un nouvel utilisateur si inexistant
       user = new User({
-        name: name || "Google User",
+        name: given_name,
+        lastname: family_name,
         email,
         image: picture,
-        isGoogleUser: true,
-        isVerified: true, // Google users sont considérés vérifiés
         role: "user",
+        isVerified: true, // Les utilisateurs Google sont automatiquement vérifiés
       });
-
       await user.save();
     }
 
-    // Génère le token JWT pour ton frontend
+    // Création du JWT pour la session
     const token = jwt.sign(
       { id: user._id, role: user.role, name: user.name },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // ⚡ Si tu veux envoyer un mail pour les non-Google users seulement
-    if (!user.isGoogleUser && !user.isVerified) {
-      const verificationToken = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-      const verificationUrl = `${process.env.CLIENT_URL}/api/auth/verify/${verificationToken}`;
+    // Envoi du cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    });
 
-      await sendEmail({
-        to: user.email,
-        subject: "Vérifiez votre compte",
-        html: `Bonjour ${user.name},<br><br>Merci de vérifier votre compte en cliquant sur ce lien : <a href="${verificationUrl}" target="_blank">Vérifier mon compte</a><br><br>Ce lien est valable 24h.`,
-      });
-    }
-
-    // Redirection vers le frontend avec le token JWT
-    res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
+    // Redirection vers le front-end (ou réponse JSON)
+    res.redirect(`${CLIENT_URL}/dashboard`); // Vous pouvez changer la route
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erreur Google OAuth" });
+    console.error("Google Auth Callback Error:", error);
+    res.status(500).json({ message: "Erreur lors de l'authentification Google." });
   }
 };
