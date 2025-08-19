@@ -1,0 +1,3 @@
+authApi/node_modules/
+authApi/.env
+authApi/googleAuth.js
