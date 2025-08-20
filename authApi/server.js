@@ -20,10 +20,10 @@ app.use(limiter)
 deleteUserCron.start();
 auditDependencies.start()
 app.use(cors({
-  origin: process.env.CLIENT_URL, 
-  credentials: true // pour que cookies soient envoyés
+  origin: "*",   // Autorise toutes les origines
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
-
 
 app.use('/api/auth',limiter, authRoutes);
 
