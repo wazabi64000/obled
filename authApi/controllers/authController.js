@@ -368,7 +368,7 @@ export const googleAuthCallback = async (req, res) => {
     });
 
     // Redirection vers le front-end (ou réponse JSON)
-    res.redirect(`${CLIENT_URL}/dashboard`); // Vous pouvez changer la route
+    res.redirect(`${CLIENT_URL}/home`); // Vous pouvez changer la route
   } catch (error) {
     console.error("Google Auth Callback Error:", error);
     res.status(500).json({ message: "Erreur lors de l'authentification Google." });
