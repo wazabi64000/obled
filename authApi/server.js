@@ -19,8 +19,25 @@ app.use(limiter)
 // Démarre le cron
 deleteUserCron.start();
 auditDependencies.start()
+
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://obled-l1mqz7ll5-wazabiboys-projects.vercel.app",
+  
+];
+
 app.use(cors({
-  origin: "*",   // Autorise toutes les origines
+  origin: function(origin, callback){
+    // autoriser les requêtes sans origine (ex: Postman)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = `L'origine ${origin} n'est pas autorisée par CORS`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true, // obligatoire pour les cookies
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
