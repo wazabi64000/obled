@@ -22,8 +22,10 @@ auditDependencies.start()
 
 
 const allowedOrigins = [
+  
   "http://localhost:5173",
   "https://obled-l1mqz7ll5-wazabiboys-projects.vercel.app",
+  "https://obled-2bmbgtbjn-wazabiboys-projects.vercel.app"
   
 ];
 
