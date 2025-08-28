@@ -1,7 +1,7 @@
 {
   "name": "auth_api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "repository": "git@github.com:wazabi64000/authApi.git",
   "author": "wazabi64000 <wazabi64000@gmail.com>",
   "license": "MIT",
@@ -27,6 +27,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
+  },
+   "bin": {
+    "generate-auth": "./server.js"
   },
   "scripts": {
     "dev": "nodemon server.js",
