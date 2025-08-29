@@ -9,10 +9,15 @@ import VerifyEmail from "./components/auth/VerifyEmail";
 import PasswordReset from "./pages/auth/PasswordReset";
 import PasswordResetForm from "./components/auth/PasswordResetForm.jsx";
 
+import "./App.css";
+import CookieConsentBanner from "./components/layout/CookieConsent.jsx";
+
 function App() {
   return (
     <Router>
       <Navbar />
+      <CookieConsentBanner />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -20,8 +25,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify/:token" element={<VerifyEmail />} />
         <Route path="/password-reset-request" element={<PasswordReset />} />
-       <Route path="/password-reset/:token" element={<PasswordResetForm />} />
-
+        <Route path="/password-reset/:token" element={<PasswordResetForm />} />
       </Routes>
       <Footer />
     </Router>

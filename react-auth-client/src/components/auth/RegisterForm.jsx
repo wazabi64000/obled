@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "../../services/api.js";
 import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 
 export default function RegisterForm() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -47,6 +48,9 @@ export default function RegisterForm() {
     } finally {
       setLoading(false);
     }
+  };
+    const handleGoogleLogin = () => {
+    window.location.href = api.googleAuthUrl();
   };
 
   return (
@@ -121,7 +125,13 @@ export default function RegisterForm() {
         <button type="submit" className="btn btn-primary w-100 mb-2" disabled={loading}>
           {loading ? "Inscription..." : "S'inscrire"}
         </button>
-
+    <button
+          type="button"
+          className="btn btn-light border w-100 d-flex align-items-center justify-content-center mb-2"
+          onClick={handleGoogleLogin}
+        >
+          <FcGoogle size={24} className="me-2" /> Se connecter avec Google
+        </button>
         <div className="text-center mt-3">
           <span>Vous avez déjà un compte ? </span>
           <a href="/login" className="text-decoration-none">Se connecter</a>

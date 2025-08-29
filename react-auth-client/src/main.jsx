@@ -7,12 +7,12 @@ import App from "./App.jsx";
 import "bootswatch/dist/spacelab/bootstrap.min.css";
 
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // pour les dropdowns, modals, etc
-
-
+ 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <App />
+      
     </AuthProvider>
   </StrictMode>
 );

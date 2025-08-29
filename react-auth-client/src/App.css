@@ -1,0 +1,11 @@
+
+ 
+ .CookieConsent  #rcc-decline-button{
+    background-color: rgb(88, 157, 180) !important;
+ }
+
+  .CookieConsent  #rcc-confirm-button{
+ background-image: linear-gradient(rgb(140, 252, 116),rgb(161, 207, 151) 50%,rgb(161, 207, 151))  !important; 
+  filter: none;
+  border: 1px solid #325172;
+ }

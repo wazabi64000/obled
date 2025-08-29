@@ -56,13 +56,13 @@ export default function Navbar() {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <img
-                    src={user.avatar ? user.avatar : "/default-profile.png"}
-                    alt={user.name}
-                    className="rounded-circle me-2"
-                    width="32"
-                    height="32"
-                  />
+           <img
+            src={user.avatar || user.picture || "/default-profile.png"}
+            alt={user.name || "Profil"}
+            className="rounded-circle me-2"
+            width="32"
+            height="32"
+          />
 
                   {user.username}
                 </a>
@@ -79,7 +79,7 @@ export default function Navbar() {
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <button className="dropdown-item" onClick={logout}>
+                    <button className=" btn btn-danger  ms-2" onClick={logout}>
                       Déconnexion
                     </button>
                   </li>
